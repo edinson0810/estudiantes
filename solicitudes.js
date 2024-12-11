@@ -15,7 +15,12 @@ export const materiaUser = usuarios.map(async (usuario) => {
   if (materiausuarios.length > 0) {
    const arrayMaterias = materiausuarios.map(async(mat) => {
     const materiaName = await solicitud(`materias?id=${mat.subjectId}`);
-    return materiaName;
+    const nota = await solicitud(`notas?subjectUserId=${mat.id}`)
+    let total = 0;
+    let cantidad = nota.map(({note})=> total += note)
+    const promedio = total /cantidad.length;
+    return { ... mat, nombreMateria: materiaName, notas: nota, promedio : promedio.toFixed(2)};
+   
    })
     const solutionMaterias = await Promise.all(arrayMaterias);
     return { ... usuario, materias: solutionMaterias}
